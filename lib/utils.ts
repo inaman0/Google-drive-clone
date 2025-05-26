@@ -68,7 +68,7 @@ export const getFileType = (fileName: string) => {
   const audioExtensions = ["mp3", "wav", "ogg", "flac"];
 
   if (documentExtensions.includes(extension))
-    return { type: "document", extension };
+    return { type: "documents", extension };
   if (imageExtensions.includes(extension)) return { type: "image", extension };
   if (videoExtensions.includes(extension)) return { type: "video", extension };
   if (audioExtensions.includes(extension)) return { type: "audio", extension };
@@ -189,8 +189,8 @@ export const getUsageSummary = (totalSpace: any) => {
   return [
     {
       title: "Documents",
-      size: totalSpace.document.size,
-      latestDate: totalSpace.document.latestDate,
+      size: totalSpace.documents.size,
+      latestDate: totalSpace.documents.latestDate,
       icon: "/assets/icons/file-document-light.svg",
       url: "/documents",
     },
@@ -224,7 +224,7 @@ export const getUsageSummary = (totalSpace: any) => {
 export const getFileTypesParams = (type: string) => {
   switch (type) {
     case "documents":
-      return ["document"];
+      return ["documents"];
     case "images":
       return ["image"];
     case "media":
@@ -232,6 +232,6 @@ export const getFileTypesParams = (type: string) => {
     case "others":
       return ["other"];
     default:
-      return ["document"];
+      return ["documents"];
   }
 };

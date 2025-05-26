@@ -9,6 +9,8 @@ import { revalidatePath } from "next/cache";
 import { Query, Models } from "node-appwrite";
 import { getCurrentUser } from "@/lib/actions/user.action";
 
+type FileType = "documents" | "image" | "video" | "audio" | "other"
+
 const handleError = (error: unknown, message: string) => {
   console.log(error, message);
   throw error;
@@ -196,7 +198,7 @@ export async function getTotalSpaceUsed() {
 
     const totalSpace = {
       image: { size: 0, latestDate: "" },
-      document: { size: 0, latestDate: "" },
+      documents: { size: 0, latestDate: "" },
       video: { size: 0, latestDate: "" },
       audio: { size: 0, latestDate: "" },
       other: { size: 0, latestDate: "" },
@@ -205,10 +207,16 @@ export async function getTotalSpaceUsed() {
     };
 
     files.documents.forEach((file) => {
-      const fileType = file.type as FileType;
+      let fileType = file.type as FileType ;
+    
+      // Fallback if fileType is not valid in totalSpace
+      if (!(fileType in totalSpace)) {
+        fileType = "other";
+      }
+    
       totalSpace[fileType].size += file.size;
       totalSpace.used += file.size;
-
+    
       if (
         !totalSpace[fileType].latestDate ||
         new Date(file.$updatedAt) > new Date(totalSpace[fileType].latestDate)
@@ -216,6 +224,7 @@ export async function getTotalSpaceUsed() {
         totalSpace[fileType].latestDate = file.$updatedAt;
       }
     });
+    
 
     return parseStringify(totalSpace);
   } catch (error) {
